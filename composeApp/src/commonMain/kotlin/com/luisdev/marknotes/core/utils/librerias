@@ -1,0 +1,9 @@
+Iconos que no son de google
+    https://github.com/DevSrSouza/compose-icons
+    https://github.com/DevSrSouza/compose-icons/blob/master/css-gg/DOCUMENTATION.md
+    https://github.com/DevSrSouza/compose-icons/blob/master/octicons/DOCUMENTATION.md
+
+
+Strings en varios lenguajes
+    https://github.com/icerockdev/moko-resources?tab=readme-ov-file#requirements
+    ./gradlew generateMRcommonMain
