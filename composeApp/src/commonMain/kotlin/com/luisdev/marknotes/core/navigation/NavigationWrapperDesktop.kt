@@ -14,6 +14,6 @@ fun NavigationWrapperDesktop() {
     NavHost(navController = navController, startDestination = Home) {
 
         composable<Login> { LoginScreen() }
-        composable<Home> { HomeScreen(navController) }
+//        composable<Home> { HomeScreen(navController, settingsViewModel) }
     }
 }

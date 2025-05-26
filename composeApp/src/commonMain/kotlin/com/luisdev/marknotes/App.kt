@@ -10,10 +10,17 @@ import com.example.compose.AppTheme
 import com.luisdev.marknotes.core.navigation.NavigationWrapper
 import com.luisdev.marknotes.core.navigation.NavigationWrapperDesktop
 import com.luisdev.marknotes.core.utils.Platform
+import com.luisdev.marknotes.features.settings.SettingsViewModel
 
 @Composable
 fun App() {
-    AppTheme {
+    val settingsViewModel = remember { SettingsViewModel() }
+    val themeSelect by settingsViewModel.themeSelect.collectAsState()
+
+    AppTheme (
+        themeSelect
+    ) {
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -21,7 +28,9 @@ fun App() {
         ) {
             when(Platform.isDesktop()) {
                 true -> NavigationWrapperDesktop()
-                else -> NavigationWrapper()
+                else -> NavigationWrapper(
+                    settingsViewModel = settingsViewModel
+                )
             }
         }
     }

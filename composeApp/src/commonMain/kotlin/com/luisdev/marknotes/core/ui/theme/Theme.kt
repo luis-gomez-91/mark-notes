@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.Color
 import com.luisdev.marknotes.core.ui.theme.getTypography
+import com.luisdev.marknotes.core.utils.Theme
 
 private val lightScheme = lightColorScheme(
     primary = primaryLight,
@@ -252,16 +253,17 @@ val unspecified_scheme = ColorFamily(
 
 @Composable
 fun AppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
-    content: @Composable() () -> Unit
+    theme: Theme,
+    content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        darkTheme -> darkScheme
-        else -> lightScheme
+    val darkTheme = when (theme) {
+        Theme.Dark -> true
+        Theme.Light -> false
+        Theme.SystemDefault -> isSystemInDarkTheme()
     }
 
     MaterialTheme(
-        colorScheme = colorScheme,
+        colorScheme = if (darkTheme) darkColorScheme() else lightColorScheme(),
 //        typography = Typography(),
         typography = getTypography(),
         shapes = Shapes(),

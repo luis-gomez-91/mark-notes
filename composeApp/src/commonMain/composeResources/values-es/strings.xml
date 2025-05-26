@@ -1,0 +1,32 @@
+<resources>
+    <string name="welcome">¡Bienvenido a MarkNotes!</string>
+    <string name="add">Agregar</string>
+    <string name="delete">Eliminar</string>
+    <string name="tasks">Tareas</string>
+    <string name="notes">Notas</string>
+    <string name="back">Atrás</string>
+    <string name="forward">Adelante</string>
+    <string name="settings">Configuraciones</string>
+    <string name="preferences">Preferencias</string>
+    <string name="select_theme">Seleccionar tema</string>
+    <string name="theme">Tema</string>
+    <string name="language">Idioma</string>
+    <string name="app">Aplicación</string>
+    <string name="privacy_policy">Política de privacidad</string>
+    <string name="app_version">Versión de la aplicación</string>
+    <string name="terms_conditions">Términos y condiciones</string>
+    <string name="select_language">Seleccionar idioma</string>
+    <string name="language_name_en">English</string>
+    <string name="language_name_es">Español</string>
+    <string name="light_theme">Tema claro</string>
+    <string name="dark_theme">Tema oscuro</string>
+    <string name="system_theme">Predeterminado del sistema</string>
+    <string name="account">Cuenta</string>
+    <string name="sign_in">Iniciar sesión</string>
+    <string name="logout">Cerrar Sesión</string>
+    <string name="subscription">Suscripción</string>
+    <string name="subscribe_now">Suscribirse ahora</string>
+    <string name="status">Estado</string>
+    <string name="not_active">No activa</string>
+
+</resources>

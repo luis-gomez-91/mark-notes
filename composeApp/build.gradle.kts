@@ -1,4 +1,3 @@
-import dev.icerock.gradle.MRVisibility
 import org.jetbrains.compose.desktop.application.dsl.TargetFormat
 import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
@@ -10,7 +9,6 @@ plugins {
     alias(libs.plugins.composeCompiler)
     alias(libs.plugins.composeHotReload)
     alias(libs.plugins.kotlinxSerialization)
-    alias(libs.plugins.moko.resources)
 }
 
 kotlin {
@@ -42,14 +40,12 @@ kotlin {
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
             implementation(libs.koin.android)
-            implementation(libs.moko.resources)
         }
         commonMain.dependencies {
             implementation(compose.runtime)
             implementation(compose.foundation)
             implementation(compose.material3)
             implementation(compose.ui)
-            implementation(compose.components.resources)
             implementation(compose.components.uiToolingPreview)
             implementation(libs.androidx.lifecycle.viewmodel)
             implementation(libs.androidx.lifecycle.runtimeCompose)
@@ -61,11 +57,19 @@ kotlin {
             implementation(libs.ktor.client.negotiation)
             implementation(libs.kotlin.serialization)
             implementation(libs.koin.core)
+            implementation(libs.koin.compose)
             implementation(compose.components.resources)
             implementation(libs.material.icons.extended)
             implementation(libs.composeIcons.cssGg)
-            implementation(libs.moko.resources)
-            implementation(libs.moko.resources.compose)
+            implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
+//            implementation(libs.compose.markdown)
+
+            implementation(libs.markdown.renderer)
+            implementation(libs.markdown.renderer.m3)
+            implementation(libs.markdown.renderer.coil3)
+            implementation(libs.markdown.renderer.code)
+
+
 
         }
         commonTest.dependencies {
@@ -75,32 +79,18 @@ kotlin {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
             implementation(libs.koin.desktop)
-            implementation(libs.moko.resources)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
             implementation(libs.koin.ios)
-            implementation(libs.moko.resources)
+            implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
         }
     }
 }
 
-
-multiplatformResources {
-    resourcesPackage.set("com.luisdev.marknotes") // required
-//    resourcesClassName.set("SharedRes") // optional, default MR
-//    resourcesVisibility.set(MRVisibility.Internal) // optional, default Public
-//    iosBaseLocalizationRegion.set("en") // optional, default "en"
-//    iosMinimalDeploymentTarget.set("11.0") // optional, default "9.0"
-}
-
-//multiplatformResources {
-//    configureCopyXCFrameworkResources("MultiPlatformLibrary")
-//}
-
 android {
     namespace = "com.luisdev.marknotes"
-    compileSdk = libs.versions.android.compileSdk.get().toInt()
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "com.luisdev.marknotes"
@@ -123,15 +113,15 @@ android {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
+    sourceSets["main"].assets.srcDirs("src/androidMain/assets")
 }
 
 repositories {
     google()
     mavenCentral()
     gradlePluginPortal()
-    maven {
-        url = uri("https://jitpack.io")
-    }
+    maven { url = uri("https://jitpack.io") }
+    maven { url = uri("https://maven.pkg.jetbrains.space/public/p/compose/dev") }
 }
 
 dependencies {

@@ -7,3 +7,15 @@ object Login
 
 @Serializable
 object Home
+
+@Serializable
+object Settings
+
+@Serializable
+object TermsCondition
+
+@Serializable
+object PrivacyPolicy
+
+@Serializable
+object AppVersion

@@ -7,3 +7,7 @@ Iconos que no son de google
 Strings en varios lenguajes
     https://github.com/icerockdev/moko-resources?tab=readme-ov-file#requirements
     ./gradlew generateMRcommonMain
+
+MarkDowns en Compose
+    https://github.com/jeziellago/compose-markdown
+

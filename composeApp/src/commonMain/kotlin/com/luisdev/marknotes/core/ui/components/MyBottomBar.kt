@@ -1,5 +1,7 @@
 package com.luisdev.marknotes.core.ui.components
 
+import androidx.compose.animation.core.animateFloatAsState
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
@@ -22,11 +24,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.luisdev.marknotes.MR
 import com.luisdev.marknotes.data.domain.BottomBarItem
 import compose.icons.CssGgIcons
 import compose.icons.cssggicons.AddR
@@ -34,7 +36,13 @@ import compose.icons.cssggicons.ChevronLeft
 import compose.icons.cssggicons.ChevronRight
 import compose.icons.cssggicons.Notes
 import compose.icons.cssggicons.PlayListCheck
-import dev.icerock.moko.resources.compose.stringResource
+import marknotes.composeapp.generated.resources.Res
+import marknotes.composeapp.generated.resources.add
+import marknotes.composeapp.generated.resources.back
+import marknotes.composeapp.generated.resources.forward
+import marknotes.composeapp.generated.resources.notes
+import marknotes.composeapp.generated.resources.tasks
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun MyBottomBar(
@@ -43,27 +51,27 @@ fun MyBottomBar(
     val items = listOf(
         BottomBarItem(
             icon = CssGgIcons.ChevronLeft,
-            description = stringResource(MR.strings.back),
+            description = stringResource(Res.string.back),
             onClick = { /* Acción para atrás */ }
         ),
         BottomBarItem(
             icon = CssGgIcons.ChevronRight,
-            description = stringResource(MR.strings.forward),
+            description = stringResource(Res.string.forward),
             onClick = { /* Acción para adelante */ }
         ),
         BottomBarItem(
             icon = CssGgIcons.AddR,
-            description = stringResource(MR.strings.add),
+            description = stringResource(Res.string.add),
             onClick = { /* Acción para agregar */ }
         ),
         BottomBarItem(
             icon = CssGgIcons.PlayListCheck,
-            description = stringResource(MR.strings.tasks),
+            description = stringResource(Res.string.tasks),
             onClick = { /* Acción para agregar */ }
         ),
         BottomBarItem(
             icon = CssGgIcons.Notes,
-            description = stringResource(MR.strings.notes),
+            description = stringResource(Res.string.notes),
             onClick = { /* Acción para agregar */ }
         ),
 
@@ -84,13 +92,23 @@ fun MyBottomBar(
             items.forEach { item ->
                 val interactionSource = remember { MutableInteractionSource() }
                 val isPressed by interactionSource.collectIsPressedAsState()
+                val scale by animateFloatAsState(
+                    targetValue = if (isPressed) 0.90f else 1f,
+                    animationSpec = tween(durationMillis = 150),
+                    label = "scaleAnimation"
+                )
+
                 Box(
                     modifier = Modifier
                         .weight(1f)
                         .clip(MaterialTheme.shapes.extraLarge)
+                        .graphicsLayer(
+                            scaleX = scale,
+                            scaleY = scale
+                        )
                         .background(
-                            if (isPressed) MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f)
-                            else Color.Transparent
+//                            if (isPressed) MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f)
+                            Color.Transparent
                         )
                         .clickable(
                             interactionSource = interactionSource,

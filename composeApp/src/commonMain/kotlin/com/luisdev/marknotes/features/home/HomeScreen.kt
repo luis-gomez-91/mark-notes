@@ -2,17 +2,24 @@ package com.luisdev.marknotes.features.home
 
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.navigation.NavHostController
 import com.luisdev.marknotes.core.ui.components.MyDashBoardScreen
-import dev.icerock.moko.resources.compose.stringResource
-import com.luisdev.marknotes.MR
+import com.luisdev.marknotes.core.utils.Language
+import com.luisdev.marknotes.features.settings.SettingsViewModel
 
 @Composable
 fun HomeScreen(
-    navController: NavHostController
+    navController: NavHostController,
+    settingsViewModel: SettingsViewModel
 ) {
+
+    val currentLanguageIso by settingsViewModel.languageSelect.collectAsState()
+    val currentLanguage = Language.entries.first { it.iso == currentLanguageIso }
+
     MyDashBoardScreen(
-        title = "Hola mundo",
+        title = "Nota 1",
         navController = navController,
         content = {
             Screen()
@@ -25,7 +32,5 @@ fun HomeScreen(
 fun Screen(
 
 ) {
-    Text("HOLA MUNDO")
-    Text(text = stringResource(MR.strings.titulo_bienvenida))
 
 }
