@@ -61,15 +61,18 @@ kotlin {
             implementation(compose.components.resources)
             implementation(libs.material.icons.extended)
             implementation(libs.composeIcons.cssGg)
-            implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
+            implementation(libs.composeIcons.simpleIcons)
+
 //            implementation(libs.compose.markdown)
 
             implementation(libs.markdown.renderer)
             implementation(libs.markdown.renderer.m3)
             implementation(libs.markdown.renderer.coil3)
             implementation(libs.markdown.renderer.code)
-
-
+            implementation(libs.compose.webview.multiplatform)
+            implementation(libs.russhwolf.settings.multiplatform)
+            implementation(libs.napier.logger)
+            implementation(libs.supabase)
 
         }
         commonTest.dependencies {
@@ -90,7 +93,7 @@ kotlin {
 
 android {
     namespace = "com.luisdev.marknotes"
-    compileSdk = 35
+    compileSdk = libs.versions.android.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.luisdev.marknotes"

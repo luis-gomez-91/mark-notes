@@ -2,6 +2,7 @@ package com.luisdev.marknotes.features.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -33,17 +34,22 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import com.luisdev.marknotes.core.navigation.AppVersion
+import com.luisdev.marknotes.core.navigation.Login
 import com.luisdev.marknotes.core.navigation.PrivacyPolicy
 import com.luisdev.marknotes.core.navigation.TermsCondition
 import com.luisdev.marknotes.core.ui.components.MyCard
 import com.luisdev.marknotes.core.ui.components.MyDashboardBack
+import com.luisdev.marknotes.core.ui.components.MyFilledTonalButton
 import com.luisdev.marknotes.core.utils.Language
 import com.luisdev.marknotes.core.utils.Localization
 import com.luisdev.marknotes.core.utils.Theme
 import com.luisdev.marknotes.core.utils.getThemeName
+import com.luisdev.marknotes.data.domain.LoginOption
 import com.luisdev.marknotes.data.domain.SettingGroup
 import com.luisdev.marknotes.data.domain.SettingItem
+import com.luisdev.marknotes.features.login.LoginViewModel
 import compose.icons.CssGgIcons
+import compose.icons.SimpleIcons
 import compose.icons.cssggicons.ChevronRight
 import compose.icons.cssggicons.EditContrast
 import compose.icons.cssggicons.FileDocument
@@ -52,6 +58,13 @@ import compose.icons.cssggicons.Info
 import compose.icons.cssggicons.Key
 import compose.icons.cssggicons.Lock
 import compose.icons.cssggicons.LogIn
+import compose.icons.simpleicons.Apple
+import compose.icons.simpleicons.Github
+import compose.icons.simpleicons.Google
+import io.github.aakira.napier.Napier
+import io.github.jan.supabase.auth.providers.Apple
+import io.github.jan.supabase.auth.providers.Github
+import io.github.jan.supabase.auth.providers.Google
 import marknotes.composeapp.generated.resources.Res
 import marknotes.composeapp.generated.resources.account
 import marknotes.composeapp.generated.resources.app
@@ -77,13 +90,14 @@ import org.koin.compose.koinInject
 fun SettingsScreen(
     navHostController: NavHostController,
     settingsViewModel: SettingsViewModel,
+    loginViewModel: LoginViewModel
 ) {
     MyDashboardBack(
         title = stringResource(Res.string.settings),
         onBackClick = { navHostController.popBackStack() },
         content = {
             Screen(
-                navHostController, settingsViewModel
+                navHostController, settingsViewModel, loginViewModel
             )
         }
     )
@@ -93,9 +107,17 @@ fun SettingsScreen(
 fun Screen(
     navHostController: NavHostController,
     settingsViewModel: SettingsViewModel,
+    loginViewModel: LoginViewModel
 ) {
     val languageBottomSheet by settingsViewModel.languageBottomSheet.collectAsState(false)
     val themeBottomSheet by settingsViewModel.themeBottomSheet.collectAsState(false)
+    val loginOpcionsBottomSheet by settingsViewModel.loginOpcionsBottomSheet.collectAsState(false)
+    val session by loginViewModel.session.collectAsState(null)
+
+    LaunchedEffect(session) {
+        Napier.i("SESION: $session", tag = "prueba")
+    }
+
 
     val preferences = SettingGroup(
         title = stringResource(Res.string.preferences),
@@ -140,7 +162,7 @@ fun Screen(
             SettingItem(
                 description = stringResource(Res.string.sign_in),
                 icon = CssGgIcons.LogIn,
-                onClick = {  }
+                onClick = { settingsViewModel.setLoginOpcionsBottomSheet(true) }
             ),
         )
     )
@@ -183,6 +205,68 @@ fun Screen(
     }
     if (themeBottomSheet) {
         ThemeSelect(settingsViewModel)
+    }
+    if (loginOpcionsBottomSheet) {
+        LoginOptions(settingsViewModel, loginViewModel, navHostController)
+    }
+
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LoginOptions(
+    settingsViewModel: SettingsViewModel,
+    loginViewModel: LoginViewModel,
+    navHostController: NavHostController
+) {
+    val options = listOf(
+        LoginOption("Apple", Apple, SimpleIcons.Apple),
+        LoginOption("Google", Google, SimpleIcons.Google),
+//        LoginOption("GitHub", Github, SimpleIcons.Github)
+    )
+
+    ModalBottomSheet(
+        onDismissRequest = { settingsViewModel.setLoginOpcionsBottomSheet(false) }
+    ) {
+        LazyColumn(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            item {
+                Text(
+                    modifier = Modifier.fillMaxWidth(),
+                    text = stringResource(Res.string.sign_in),
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Center,
+                    color = MaterialTheme.colorScheme.primary
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+
+            items(options) { option ->
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(horizontal = 80.dp)
+                ) {
+                    MyFilledTonalButton(
+                        text = option.name,
+                        enabled = true,
+                        onClickAction = {
+//                            navHostController.navigate(Login)
+                            loginViewModel.signInWithOAuth(option.provider)
+                        },
+                        buttonColor = MaterialTheme.colorScheme.secondaryContainer,
+                        textColor = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.fillMaxWidth(),
+                        icon = option.icon
+                    )
+                }
+            }
+
+            item {
+                Spacer(modifier = Modifier.height(16.dp))
+            }
+        }
     }
 }
 

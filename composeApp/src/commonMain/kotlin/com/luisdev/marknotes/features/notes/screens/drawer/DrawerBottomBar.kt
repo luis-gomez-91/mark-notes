@@ -1,4 +1,4 @@
-package com.luisdev.marknotes.core.ui.components
+package com.luisdev.marknotes.features.notes.screens.drawer
 
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -13,8 +13,15 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.Filter
+import androidx.compose.material.icons.outlined.FilterList
+import androidx.compose.material.icons.outlined.LocalOffer
+import androidx.compose.material.icons.outlined.StarOutline
+import androidx.compose.material.icons.outlined.UnfoldMore
 import androidx.compose.material3.BottomAppBar
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -34,8 +41,11 @@ import compose.icons.CssGgIcons
 import compose.icons.cssggicons.AddR
 import compose.icons.cssggicons.ChevronLeft
 import compose.icons.cssggicons.ChevronRight
+import compose.icons.cssggicons.FileAdd
+import compose.icons.cssggicons.FolderAdd
 import compose.icons.cssggicons.Notes
 import compose.icons.cssggicons.PlayListCheck
+import compose.icons.cssggicons.SortAz
 import marknotes.composeapp.generated.resources.Res
 import marknotes.composeapp.generated.resources.add
 import marknotes.composeapp.generated.resources.back
@@ -45,36 +55,40 @@ import marknotes.composeapp.generated.resources.tasks
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
-fun MyBottomBar(
-    navController: NavHostController
+fun DrawerBottomBar(
+
 ) {
     val items = listOf(
         BottomBarItem(
-            icon = CssGgIcons.ChevronLeft,
+            icon = CssGgIcons.FileAdd,
             description = stringResource(Res.string.back),
             onClick = { /* Acción para atrás */ }
         ),
         BottomBarItem(
-            icon = CssGgIcons.ChevronRight,
+            icon = CssGgIcons.FolderAdd,
             description = stringResource(Res.string.forward),
             onClick = { /* Acción para adelante */ }
         ),
         BottomBarItem(
-            icon = CssGgIcons.AddR,
+            icon = Icons.Outlined.FilterList,
+            description = stringResource(Res.string.notes),
+            onClick = { /* Acción para agregar */ }
+        ),
+        BottomBarItem(
+            icon = Icons.Outlined.UnfoldMore,
             description = stringResource(Res.string.add),
             onClick = { /* Acción para agregar */ }
         ),
         BottomBarItem(
-            icon = CssGgIcons.PlayListCheck,
-            description = stringResource(Res.string.tasks),
+            icon = Icons.Outlined.LocalOffer,
+            description = stringResource(Res.string.add),
             onClick = { /* Acción para agregar */ }
         ),
         BottomBarItem(
-            icon = CssGgIcons.Notes,
-            description = stringResource(Res.string.notes),
+            icon = Icons.Outlined.StarOutline,
+            description = stringResource(Res.string.add),
             onClick = { /* Acción para agregar */ }
-        ),
-
+        )
     )
 
     BottomAppBar(
@@ -90,53 +104,15 @@ fun MyBottomBar(
             horizontalArrangement = Arrangement.SpaceAround
         ) {
             items.forEach { item ->
-                val interactionSource = remember { MutableInteractionSource() }
-                val isPressed by interactionSource.collectIsPressedAsState()
-                val scale by animateFloatAsState(
-                    targetValue = if (isPressed) 0.90f else 1f,
-                    animationSpec = tween(durationMillis = 150),
-                    label = "scaleAnimation"
-                )
-
-                Box(
-                    modifier = Modifier
-                        .weight(1f)
-                        .clip(MaterialTheme.shapes.extraLarge)
-                        .graphicsLayer(
-                            scaleX = scale,
-                            scaleY = scale
-                        )
-                        .background(
-//                            if (isPressed) MaterialTheme.colorScheme.secondary.copy(alpha = 0.05f)
-                            Color.Transparent
-                        )
-                        .clickable(
-                            interactionSource = interactionSource,
-                            indication = null,
-                            onClick = item.onClick
-                        ),
-                    contentAlignment = Alignment.Center
+                IconButton(
+                    onClick = { item.onClick }
                 ) {
-                    Column(
-                        modifier = Modifier.padding(vertical = 8.dp),
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Icon(
-                            imageVector = item.icon,
-                            contentDescription = item.description,
-                            tint = MaterialTheme.colorScheme.secondary,
-                            modifier = Modifier.size(24.dp)
-                        )
-                        Text(
-                            text = item.description,
-                            style = MaterialTheme.typography.labelSmall,
-                            color = MaterialTheme.colorScheme.secondary,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            textAlign = TextAlign.Center,
-                            modifier = Modifier.padding(top = 4.dp)
-                        )
-                    }
+                    Icon(
+                        imageVector = item.icon,
+                        contentDescription = item.description,
+                        tint = MaterialTheme.colorScheme.secondary,
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
             }
         }

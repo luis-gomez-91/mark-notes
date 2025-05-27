@@ -3,6 +3,7 @@ package com.luisdev.marknotes.features.settings
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
@@ -36,44 +37,45 @@ fun AppVersionScreen(
                     var md = ""
                     if (language == "es")
                         md = """
-                            ### 📱 Application Version
-    
-                            Welcome to **MarkNotes** ✨  
-                            Your secure space for taking notes in Markdown.
-    
+                            ### 📱 Versión de la Aplicación
+
+                            Bienvenido a **MarkNotes** ✨  
+                            Tu espacio seguro para tomar notas en Markdown.
+
                             ---
-    
-                            ##### ℹ️ Version Info
-    
-                            - **App Version:** $version  
-                            - **Build Number:** $build
-                            - **Last Update:** `May 26, 2025`
-    
+
+                            ##### ℹ️ Información de la Versión
+
+                            - **Versión de la app:** $version  
+                            - **Número de compilación:** $build  
+                            - **Última actualización:** `26 de mayo de 2025`
+
                             ---
-    
-                            ##### 🚀 What’s New?
-    
-                            - Authentication with Google, GitHub, and Apple
-                            - Cross-device note synchronization
-                            - Performance improvements and bug fixes
-                            - Cleaner, modern UI
-    
+
+                            ##### 🚀 ¿Qué hay de nuevo?
+
+                            - Autenticación con Google, GitHub y Apple  
+                            - Sincronización de notas entre dispositivos  
+                            - Mejoras de rendimiento y corrección de errores  
+                            - Interfaz más limpia y moderna
+
                             ---
-    
-                            ##### 📬 Feedback or Issues?
-    
-                            Contact us at  
+
+                            ##### 📬 ¿Comentarios o problemas?
+
+                            Contáctanos en  
                             [support@marknotes.app](mailto:support@marknotes.app)
-    
+
                             ---
-    
-                            > Thank you for using MarkNotes ❤️
-    
+
+                            > Gracias por usar MarkNotes ❤️
+
                             ---
-    
-                            ##### 🔁 Updates
-    
-                            We'll notify you here whenever a new version is available.
+
+                            ##### 🔁 Actualizaciones
+
+                            Te notificaremos aquí cada vez que haya una nueva versión disponible.
+
                         """.trimIndent()
                     else {
                         md = """
@@ -117,6 +119,7 @@ fun AppVersionScreen(
                             We'll notify you here whenever a new version is available.
                         """.trimIndent()
                     }
+                    Text(language)
                     Markdown(md)
                 }
             }

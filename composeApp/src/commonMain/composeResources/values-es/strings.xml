@@ -1,5 +1,6 @@
 <resources>
     <string name="welcome">¡Bienvenido a MarkNotes!</string>
+    <string name="app_name">MarkNotes</string>
     <string name="add">Agregar</string>
     <string name="delete">Eliminar</string>
     <string name="tasks">Tareas</string>
@@ -28,5 +29,11 @@
     <string name="subscribe_now">Suscribirse ahora</string>
     <string name="status">Estado</string>
     <string name="not_active">No activa</string>
+    <string name="search">Buscar</string>
+    <string name="tags">Etiquetas</string>
+    <string name="starred">Destacadas</string>
+    <string name="slogan">"Una buena nota vale más que mil memorias."</string>
+    <string name="find_note">Buscar nota</string>
+    <string name="sign_in_with">Iniciar sesión con</string>
 
 </resources>

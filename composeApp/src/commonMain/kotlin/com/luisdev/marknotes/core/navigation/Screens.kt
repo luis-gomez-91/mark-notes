@@ -6,7 +6,7 @@ import kotlinx.serialization.Serializable
 object Login
 
 @Serializable
-object Home
+object Notes
 
 @Serializable
 object Settings

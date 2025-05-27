@@ -1,4 +1,4 @@
-package com.luisdev.marknotes.core.ui.components
+package com.luisdev.marknotes.features.notes.screens.main
 
 import androidx.compose.material3.DrawerState
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -23,7 +23,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MyTopBar(
+fun MainTopBar(
     title: String,
     drawerState: DrawerState,
     navHostController: NavHostController
