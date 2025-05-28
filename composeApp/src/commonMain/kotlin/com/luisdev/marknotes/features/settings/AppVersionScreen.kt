@@ -5,14 +5,11 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.luisdev.marknotes.core.ui.components.MyDashboardBack
 import com.luisdev.marknotes.core.utils.getAppVersion
 import com.luisdev.marknotes.core.utils.getBuildNumber
-import com.luisdev.marknotes.core.utils.loadMarkdownResource
 import com.mikepenz.markdown.m3.Markdown
 import marknotes.composeapp.generated.resources.Res
 import marknotes.composeapp.generated.resources.app_version
@@ -119,7 +116,6 @@ fun AppVersionScreen(
                             We'll notify you here whenever a new version is available.
                         """.trimIndent()
                     }
-                    Text(language)
                     Markdown(md)
                 }
             }

@@ -18,8 +18,8 @@ fun MyCard(
     modifier: Modifier = Modifier.fillMaxWidth(),
     onClick: () -> Unit = {},
     borderColor : Color? = null,
-    containerColor: Color = MaterialTheme.colorScheme.surfaceContainer,
-    contentColor: Color = MaterialTheme.colorScheme.primary,
+    containerColor: Color = MaterialTheme.colorScheme.surfaceContainerLow,
+    contentColor: Color = MaterialTheme.colorScheme.onSurface,
     shape: Shape = MaterialTheme.shapes.medium,
     content: @Composable () -> Unit = {}
 ) {

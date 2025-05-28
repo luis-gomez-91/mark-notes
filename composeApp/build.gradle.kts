@@ -39,6 +39,7 @@ kotlin {
             implementation(compose.preview)
             implementation(libs.androidx.activity.compose)
             implementation(libs.ktor.client.okhttp)
+            implementation(libs.ktor.client.android)
             implementation(libs.koin.android)
         }
         commonMain.dependencies {
@@ -73,8 +74,7 @@ kotlin {
             implementation(libs.russhwolf.settings.multiplatform)
             implementation(libs.napier.logger)
             implementation(libs.supabase)
-            implementation("io.coil-kt.coil3:coil-svg:3.0.4")
-
+//            implementation("io.coil-kt.coil3:coil-svg:3.0.4")
 
         }
         commonTest.dependencies {
@@ -83,11 +83,12 @@ kotlin {
         desktopMain.dependencies {
             implementation(compose.desktop.currentOs)
             implementation(libs.kotlinx.coroutinesSwing)
-            implementation(libs.koin.desktop)
+            implementation(libs.ktor.client.java)
+//            implementation(libs.koin.desktop)
         }
         iosMain.dependencies {
             implementation(libs.ktor.client.darwin)
-            implementation(libs.koin.ios)
+//            implementation(libs.koin.ios)
             implementation("com.russhwolf:multiplatform-settings-no-arg:1.3.0")
         }
     }

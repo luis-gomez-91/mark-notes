@@ -24,7 +24,7 @@
     <string name="system_theme">Predeterminado del sistema</string>
     <string name="account">Cuenta</string>
     <string name="sign_in">Iniciar sesión</string>
-    <string name="logout">Cerrar Sesión</string>
+    <string name="sign_out">Cerrar Sesión</string>
     <string name="subscription">Suscripción</string>
     <string name="subscribe_now">Suscribirse ahora</string>
     <string name="status">Estado</string>
@@ -35,5 +35,9 @@
     <string name="slogan">"Una buena nota vale más que mil memorias."</string>
     <string name="find_note">Buscar nota</string>
     <string name="sign_in_with">Iniciar sesión con</string>
+    <string name="member_since">Miembro desde</string>
+    <string name="premium_messagge">Obtén más con Premium</string>
+    <string name="premium_plans">Planes Premium</string>
+
 
 </resources>

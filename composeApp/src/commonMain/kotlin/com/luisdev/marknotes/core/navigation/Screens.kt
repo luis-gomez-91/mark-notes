@@ -19,3 +19,6 @@ object PrivacyPolicy
 
 @Serializable
 object AppVersion
+
+@Serializable
+object SuscriptionOptions

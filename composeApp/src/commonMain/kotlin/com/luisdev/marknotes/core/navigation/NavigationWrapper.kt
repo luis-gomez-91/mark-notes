@@ -14,6 +14,7 @@ import com.luisdev.marknotes.features.settings.PrivacyPolicyScreen
 import com.luisdev.marknotes.features.settings.SettingsScreen
 import com.luisdev.marknotes.features.settings.SettingsViewModel
 import com.luisdev.marknotes.features.settings.TermsConditionsScreen
+import com.luisdev.marknotes.features.suscription_options.SuscriptionOptionsScreen
 
 @Composable
 fun NavigationWrapper(
@@ -32,6 +33,7 @@ fun NavigationWrapper(
         composable<TermsCondition> { TermsConditionsScreen(language = language.value, onBackClick = { navController.popBackStack() }) }
         composable<PrivacyPolicy> { PrivacyPolicyScreen(language = language.value, onBackClick = { navController.popBackStack() }) }
         composable<AppVersion> { AppVersionScreen(language = language.value, onBackClick = { navController.popBackStack() }) }
+        composable<SuscriptionOptions> { SuscriptionOptionsScreen(onBackClick = { navController.popBackStack() }) }
 
     }
 }

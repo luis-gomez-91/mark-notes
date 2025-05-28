@@ -2,7 +2,6 @@ package com.luisdev.marknotes.features.settings
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,13 +9,16 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.RadioButton
@@ -29,36 +31,43 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
+import coil3.compose.AsyncImage
 import com.luisdev.marknotes.core.navigation.AppVersion
-import com.luisdev.marknotes.core.navigation.Login
 import com.luisdev.marknotes.core.navigation.PrivacyPolicy
+import com.luisdev.marknotes.core.navigation.SuscriptionOptions
 import com.luisdev.marknotes.core.navigation.TermsCondition
+import com.luisdev.marknotes.core.ui.components.LoginButton
 import com.luisdev.marknotes.core.ui.components.MyCard
 import com.luisdev.marknotes.core.ui.components.MyDashboardBack
-import com.luisdev.marknotes.core.ui.components.MyFilledTonalButton
+import com.luisdev.marknotes.core.ui.components.MyHorizontalDivider
 import com.luisdev.marknotes.core.utils.Language
 import com.luisdev.marknotes.core.utils.Localization
 import com.luisdev.marknotes.core.utils.Theme
 import com.luisdev.marknotes.core.utils.getThemeName
 import com.luisdev.marknotes.data.domain.LoginOption
+import com.luisdev.marknotes.data.domain.LoginProvider
 import com.luisdev.marknotes.data.domain.SettingGroup
 import com.luisdev.marknotes.data.domain.SettingItem
 import com.luisdev.marknotes.features.login.LoginViewModel
 import compose.icons.CssGgIcons
 import compose.icons.SimpleIcons
 import compose.icons.cssggicons.ChevronRight
+import compose.icons.cssggicons.Crown
 import compose.icons.cssggicons.EditContrast
 import compose.icons.cssggicons.FileDocument
 import compose.icons.cssggicons.GlobeAlt
 import compose.icons.cssggicons.Info
-import compose.icons.cssggicons.Key
 import compose.icons.cssggicons.Lock
 import compose.icons.cssggicons.LogIn
+import compose.icons.cssggicons.LogOut
+import compose.icons.cssggicons.User
 import compose.icons.simpleicons.Apple
 import compose.icons.simpleicons.Facebook
 import compose.icons.simpleicons.Github
@@ -68,12 +77,18 @@ import io.github.jan.supabase.auth.providers.Apple
 import io.github.jan.supabase.auth.providers.Facebook
 import io.github.jan.supabase.auth.providers.Github
 import io.github.jan.supabase.auth.providers.Google
+import io.github.jan.supabase.auth.user.UserSession
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import kotlinx.serialization.json.jsonPrimitive
 import marknotes.composeapp.generated.resources.Res
 import marknotes.composeapp.generated.resources.account
 import marknotes.composeapp.generated.resources.app
 import marknotes.composeapp.generated.resources.app_version
 import marknotes.composeapp.generated.resources.forward
 import marknotes.composeapp.generated.resources.language
+import marknotes.composeapp.generated.resources.member_since
 import marknotes.composeapp.generated.resources.not_active
 import marknotes.composeapp.generated.resources.preferences
 import marknotes.composeapp.generated.resources.privacy_policy
@@ -82,6 +97,7 @@ import marknotes.composeapp.generated.resources.select_theme
 import marknotes.composeapp.generated.resources.settings
 import marknotes.composeapp.generated.resources.sign_in
 import marknotes.composeapp.generated.resources.sign_in_with
+import marknotes.composeapp.generated.resources.sign_out
 import marknotes.composeapp.generated.resources.status
 import marknotes.composeapp.generated.resources.subscribe_now
 import marknotes.composeapp.generated.resources.subscription
@@ -116,23 +132,23 @@ fun Screen(
     val languageBottomSheet by settingsViewModel.languageBottomSheet.collectAsState(false)
     val themeBottomSheet by settingsViewModel.themeBottomSheet.collectAsState(false)
     val loginOpcionsBottomSheet by settingsViewModel.loginOpcionsBottomSheet.collectAsState(false)
+    val accountBottomSheet by settingsViewModel.accountBottomSheet.collectAsState(false)
     val session by loginViewModel.session.collectAsState(null)
 
     LaunchedEffect(session) {
         Napier.i("SESION: $session", tag = "prueba")
     }
 
-
     val preferences = SettingGroup(
         title = stringResource(Res.string.preferences),
         settingItems = listOf(
             SettingItem(
-                description = stringResource(Res.string.theme),
+                title = stringResource(Res.string.theme),
                 icon = CssGgIcons.EditContrast,
                 onClick = { settingsViewModel.setThemeBottomSheet(true) }
             ),
             SettingItem(
-                description = stringResource(Res.string.language),
+                title = stringResource(Res.string.language),
                 icon = CssGgIcons.GlobeAlt,
                 onClick = { settingsViewModel.setLanguageBottomSheet(true) }
             )
@@ -143,17 +159,17 @@ fun Screen(
         title = stringResource(Res.string.app),
         settingItems = listOf(
             SettingItem(
-                description = stringResource(Res.string.terms_conditions),
+                title = stringResource(Res.string.terms_conditions),
                 icon = CssGgIcons.FileDocument,
                 onClick = { navHostController.navigate(TermsCondition) }
             ),
             SettingItem(
-                description = stringResource(Res.string.privacy_policy),
+                title = stringResource(Res.string.privacy_policy),
                 icon = CssGgIcons.Lock,
                 onClick = { navHostController.navigate(PrivacyPolicy) }
             ),
             SettingItem(
-                description = stringResource(Res.string.app_version),
+                title = stringResource(Res.string.app_version),
                 icon = CssGgIcons.Info,
                 onClick = { navHostController.navigate(AppVersion) }
             )
@@ -163,11 +179,23 @@ fun Screen(
     val account = SettingGroup(
         title = stringResource(Res.string.account),
         settingItems = listOf(
-            SettingItem(
-                description = stringResource(Res.string.sign_in),
-                icon = CssGgIcons.LogIn,
-                onClick = { settingsViewModel.setLoginOpcionsBottomSheet(true) }
-            ),
+        when (session) {
+            null -> {
+                SettingItem(
+                    title = stringResource(Res.string.sign_in),
+                    icon = CssGgIcons.LogIn,
+                    onClick = { settingsViewModel.setLoginOpcionsBottomSheet(true) }
+                )
+            }
+            else -> {
+                SettingItem(
+                    title = stringResource(Res.string.account),
+                    description = session?.user?.email,
+                    icon = CssGgIcons.User,
+                    onClick = { settingsViewModel.setAccountBottomSheet(true) }
+                )
+            }
+        }
         )
     )
 
@@ -175,14 +203,10 @@ fun Screen(
         title = stringResource(Res.string.subscription),
         settingItems = listOf(
             SettingItem(
+                title = stringResource(Res.string.subscribe_now),
                 description = "${stringResource(Res.string.status)}: ${stringResource(Res.string.not_active)}",
-                icon = CssGgIcons.Info,
-                onClick = {  }
-            ),
-            SettingItem(
-                description = stringResource(Res.string.subscribe_now),
-                icon = CssGgIcons.Key,
-                onClick = {  }
+                icon = CssGgIcons.Crown,
+                onClick = { navHostController.navigate(SuscriptionOptions) }
             ),
         )
     )
@@ -190,14 +214,8 @@ fun Screen(
     val settingGroups = listOf(account, suscription, preferences, app)
 
     LazyColumn(
-        modifier = Modifier
-            .fillMaxSize()
-//            .padding(WindowInsets.systemBars.asPaddingValues())
+        modifier = Modifier.fillMaxSize()
     ) {
-        item {
-            Spacer(modifier = Modifier.height(16.dp))
-        }
-
         items(settingGroups) { group ->
             SettingItem(group)
             Spacer(Modifier.height(8.dp))
@@ -211,24 +229,115 @@ fun Screen(
         ThemeSelect(settingsViewModel)
     }
     if (loginOpcionsBottomSheet) {
-        LoginOptions(settingsViewModel, loginViewModel, navHostController)
+        LoginOptions(settingsViewModel, loginViewModel)
+    }
+
+    if (accountBottomSheet) {
+        session?.let { AccountOptions(settingsViewModel, loginViewModel, it) }
     }
 
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun LoginOptions(
+fun AccountOptions(
     settingsViewModel: SettingsViewModel,
     loginViewModel: LoginViewModel,
-    navHostController: NavHostController
+    session: UserSession
+) {
+    val email = session.user?.email ?: "Correo no disponible"
+    val userId = session.user?.id ?: "ID desconocido"
+//    val createdAt = session.user?.createdAt
+    val createdAt = session.user?.createdAt?.let { createdAtString ->
+        val instant = Instant.parse(createdAtString.toString()) // Parsea el String ISO8601
+        val localDate = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
+        localDate.toString()  // Convierte LocalDate a "YYYY-MM-DD"
+    } ?: "Fecha no disponible"
+
+    val avatarUrl = (session.user?.userMetadata)
+        ?.get("avatar_url")
+        ?.jsonPrimitive
+        ?.content
+
+    ModalBottomSheet(
+        onDismissRequest = { settingsViewModel.setAccountBottomSheet(false) }
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(24.dp),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            AsyncImage(
+                model = avatarUrl,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(100.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            // Correo
+            Text(
+                text = email,
+                style = MaterialTheme.typography.titleMedium,
+                color = MaterialTheme.colorScheme.onSurface
+            )
+
+            // ID del usuario
+            Text(
+                text = "ID: $userId",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.outline
+            )
+
+            // Fecha de creación
+            Text(
+                text = "${stringResource(Res.string.member_since)}: $createdAt",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.outline
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    loginViewModel.signOut()
+                    settingsViewModel.setAccountBottomSheet(false)
+                },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = MaterialTheme.colorScheme.errorContainer,
+                    contentColor = MaterialTheme.colorScheme.onErrorContainer
+                ),
+            ) {
+                Icon(
+                    imageVector = CssGgIcons.LogOut,
+                    contentDescription = stringResource(Res.string.sign_out)
+                )
+                Spacer(modifier = Modifier.width(8.dp))
+                Text(text = stringResource(Res.string.sign_out), style = MaterialTheme.typography.bodyMedium)
+            }
+
+            Spacer(modifier = Modifier.height(8.dp))
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun LoginOptions(
+    settingsViewModel: SettingsViewModel,
+    loginViewModel: LoginViewModel
 ) {
     val options = listOf(
-        LoginOption("Google", Google, SimpleIcons.Google, Color.White, Color.Black),
-        LoginOption("Apple", Apple, SimpleIcons.Apple, Color.Black, Color.White),
-//        LoginOption("GitHub", io.github.jan.supabase.auth.providers.Github, SimpleIcons.Github),
-        LoginOption("Facebook", Facebook , SimpleIcons.Facebook, MaterialTheme.colorScheme.onPrimaryContainer, MaterialTheme.colorScheme.onPrimary)
+        LoginOption("Apple", LoginProvider.IDToken(Apple), SimpleIcons.Apple, null, Color.Black, Color.White),
+        LoginOption("Google", LoginProvider.IDToken(Google), SimpleIcons.Google, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png", Color.White, Color.Black),
+        LoginOption("Facebook", LoginProvider.IDToken(Facebook) , SimpleIcons.Facebook, "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2023_Facebook_icon.svg/2048px-2023_Facebook_icon.svg.png", Color(0xFF1877F2), Color.White),
+        LoginOption("GitHub", LoginProvider.OAuth(Github), SimpleIcons.Github, null,  Color.Black, Color.White)
     )
+    val isLoading by loginViewModel.isLoading.collectAsState()
 
     ModalBottomSheet(
         onDismissRequest = { settingsViewModel.setLoginOpcionsBottomSheet(false) }
@@ -236,46 +345,38 @@ fun LoginOptions(
         LazyColumn(
             modifier = Modifier.fillMaxWidth()
         ) {
-            item {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    text = stringResource(Res.string.sign_in),
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Center,
-                    color = MaterialTheme.colorScheme.primary
-                )
-                Spacer(modifier = Modifier.height(16.dp))
+            if (isLoading) {
+                item {
+                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
+                }
             }
-
             items(options) { option ->
-                Box(
+                Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(horizontal = 80.dp)
+                        .padding(horizontal = 32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
                 ) {
-                    MyFilledTonalButton(
+                    LoginButton(
                         text = "${stringResource(Res.string.sign_in_with)} ${option.name}",
-                        enabled = true,
+                        enabled = !isLoading,
                         onClickAction = {
-//                            navHostController.navigate(Login)
                             loginViewModel.signInWithOAuth(option.provider)
                         },
-                        buttonColor = option.colorContainer,
-                        textColor = option.colorText,
-                        modifier = Modifier.fillMaxWidth(),
-                        icon = option.icon
+                        buttonColor = MaterialTheme.colorScheme.secondaryContainer,
+                        textColor = MaterialTheme.colorScheme.secondary,
+//                        buttonColor = option.colorContainer,
+//                        textColor = option.colorText,
+//                        modifier = Modifier.fillMaxWidth(),
+                        icon = option.icon,
+                        urlImage = option.urlImage
                     )
                 }
                 Spacer(Modifier.height(8.dp))
             }
-
-            item {
-                Spacer(modifier = Modifier.height(16.dp))
-            }
         }
     }
 }
-
 
 @Composable
 fun SettingItem(
@@ -295,39 +396,44 @@ fun SettingItem(
 
             Column {
                 group.settingItems.forEach {
-                    Row (
+                    Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .clickable { it.onClick() },
+                            .clickable { it.onClick?.let { it1 -> it1() } }
+                            .padding(vertical = 8.dp),
                         verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-
                     ) {
-                        Row (
-                            verticalAlignment = Alignment.CenterVertically,
+                        Icon(
+                            imageVector = it.icon,
+                            contentDescription = it.description,
+                            tint = MaterialTheme.colorScheme.inverseSurface,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(Modifier.width(8.dp))
+
+                        Column(
+                            modifier = Modifier.weight(1f)
                         ) {
-                            Icon(
-                                imageVector = it.icon,
-                                contentDescription = it.description,
-                                tint = MaterialTheme.colorScheme.primary
-                            )
-                            Spacer(Modifier.width(8.dp))
                             Text(
-                                text = it.description,
-                                style = MaterialTheme.typography.labelLarge,
-                                color = MaterialTheme.colorScheme.primary
+                                text = it.title,
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.inverseSurface
                             )
+                            it.description?.let { desc ->
+                                Text(
+                                    text = desc,
+                                    style = MaterialTheme.typography.labelMedium,
+                                    color = MaterialTheme.colorScheme.outline
+                                )
+                            }
                         }
 
-                        IconButton(
-                            onClick = it.onClick
-                        ) {
-                            Icon(
-                                imageVector = CssGgIcons.ChevronRight,
-                                contentDescription = stringResource(Res.string.forward),
-                                tint = MaterialTheme.colorScheme.secondary
-                            )
-                        }
+                        Icon(
+                            imageVector = CssGgIcons.ChevronRight,
+                            contentDescription = stringResource(Res.string.forward),
+                            tint = MaterialTheme.colorScheme.secondary,
+                            modifier = Modifier.size(20.dp)
+                        )
                     }
                 }
             }
@@ -369,7 +475,7 @@ fun LanguageSelect(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                HorizontalDivider()
+                MyHorizontalDivider()
             }
 
             items(languages) { language ->
@@ -391,7 +497,7 @@ fun LanguageSelect(
                         onClick = { settingsViewModel.setLanguage(language.iso) }
                     )
                 }
-                HorizontalDivider()
+                MyHorizontalDivider()
             }
             item {
                 Spacer(modifier = Modifier.height(16.dp))
@@ -423,7 +529,7 @@ fun ThemeSelect(
                     color = MaterialTheme.colorScheme.primary
                 )
                 Spacer(modifier = Modifier.height(16.dp))
-                HorizontalDivider()
+                MyHorizontalDivider()
             }
 
             items(themes) { appTheme ->
@@ -445,7 +551,7 @@ fun ThemeSelect(
                         onClick = { settingsViewModel.setTheme(appTheme) }
                     )
                 }
-                HorizontalDivider()
+                MyHorizontalDivider()
             }
             item {
                 Spacer(modifier = Modifier.height(16.dp))
