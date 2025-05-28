@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.RectangleShape
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -59,10 +60,12 @@ import compose.icons.cssggicons.Key
 import compose.icons.cssggicons.Lock
 import compose.icons.cssggicons.LogIn
 import compose.icons.simpleicons.Apple
+import compose.icons.simpleicons.Facebook
 import compose.icons.simpleicons.Github
 import compose.icons.simpleicons.Google
 import io.github.aakira.napier.Napier
 import io.github.jan.supabase.auth.providers.Apple
+import io.github.jan.supabase.auth.providers.Facebook
 import io.github.jan.supabase.auth.providers.Github
 import io.github.jan.supabase.auth.providers.Google
 import marknotes.composeapp.generated.resources.Res
@@ -78,6 +81,7 @@ import marknotes.composeapp.generated.resources.select_language
 import marknotes.composeapp.generated.resources.select_theme
 import marknotes.composeapp.generated.resources.settings
 import marknotes.composeapp.generated.resources.sign_in
+import marknotes.composeapp.generated.resources.sign_in_with
 import marknotes.composeapp.generated.resources.status
 import marknotes.composeapp.generated.resources.subscribe_now
 import marknotes.composeapp.generated.resources.subscription
@@ -220,9 +224,10 @@ fun LoginOptions(
     navHostController: NavHostController
 ) {
     val options = listOf(
-        LoginOption("Apple", Apple, SimpleIcons.Apple),
-        LoginOption("Google", Google, SimpleIcons.Google),
-//        LoginOption("GitHub", Github, SimpleIcons.Github)
+        LoginOption("Google", Google, SimpleIcons.Google, Color.White, Color.Black),
+        LoginOption("Apple", Apple, SimpleIcons.Apple, Color.Black, Color.White),
+//        LoginOption("GitHub", io.github.jan.supabase.auth.providers.Github, SimpleIcons.Github),
+        LoginOption("Facebook", Facebook , SimpleIcons.Facebook, MaterialTheme.colorScheme.onPrimaryContainer, MaterialTheme.colorScheme.onPrimary)
     )
 
     ModalBottomSheet(
@@ -249,18 +254,19 @@ fun LoginOptions(
                         .padding(horizontal = 80.dp)
                 ) {
                     MyFilledTonalButton(
-                        text = option.name,
+                        text = "${stringResource(Res.string.sign_in_with)} ${option.name}",
                         enabled = true,
                         onClickAction = {
 //                            navHostController.navigate(Login)
                             loginViewModel.signInWithOAuth(option.provider)
                         },
-                        buttonColor = MaterialTheme.colorScheme.secondaryContainer,
-                        textColor = MaterialTheme.colorScheme.secondary,
+                        buttonColor = option.colorContainer,
+                        textColor = option.colorText,
                         modifier = Modifier.fillMaxWidth(),
                         icon = option.icon
                     )
                 }
+                Spacer(Modifier.height(8.dp))
             }
 
             item {

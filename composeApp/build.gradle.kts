@@ -73,6 +73,8 @@ kotlin {
             implementation(libs.russhwolf.settings.multiplatform)
             implementation(libs.napier.logger)
             implementation(libs.supabase)
+            implementation("io.coil-kt.coil3:coil-svg:3.0.4")
+
 
         }
         commonTest.dependencies {
