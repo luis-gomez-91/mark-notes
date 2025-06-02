@@ -33,4 +33,16 @@ object AppSettings {
         settings.remove(KEY_SESSION_TOKEN)
     }
 
+    fun setUserId(user_id: String) {
+        settings.putString(USER_ID, user_id)
+    }
+
+    fun getUserId(): String? {
+        return settings.getStringOrNull(USER_ID)
+    }
+
+    fun clearUserId() {
+        settings.remove(USER_ID)
+    }
+
 }

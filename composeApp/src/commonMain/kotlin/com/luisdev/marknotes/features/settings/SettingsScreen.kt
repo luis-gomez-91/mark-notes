@@ -51,10 +51,10 @@ import com.luisdev.marknotes.core.utils.Language
 import com.luisdev.marknotes.core.utils.Localization
 import com.luisdev.marknotes.core.utils.Theme
 import com.luisdev.marknotes.core.utils.getThemeName
-import com.luisdev.marknotes.data.domain.LoginOption
-import com.luisdev.marknotes.data.domain.LoginProvider
-import com.luisdev.marknotes.data.domain.SettingGroup
-import com.luisdev.marknotes.data.domain.SettingItem
+import com.luisdev.marknotes.domain.model.LoginOption
+import com.luisdev.marknotes.domain.model.LoginProvider
+import com.luisdev.marknotes.domain.model.SettingGroup
+import com.luisdev.marknotes.domain.model.SettingItem
 import com.luisdev.marknotes.features.login.LoginViewModel
 import compose.icons.CssGgIcons
 import compose.icons.SimpleIcons
@@ -314,10 +314,11 @@ fun AccountOptions(
             ) {
                 Icon(
                     imageVector = CssGgIcons.LogOut,
-                    contentDescription = stringResource(Res.string.sign_out)
+                    contentDescription = stringResource(Res.string.sign_out),
+                    modifier = Modifier.size(18.dp)
                 )
                 Spacer(modifier = Modifier.width(8.dp))
-                Text(text = stringResource(Res.string.sign_out), style = MaterialTheme.typography.bodyMedium)
+                Text(text = stringResource(Res.string.sign_out))
             }
 
             Spacer(modifier = Modifier.height(8.dp))

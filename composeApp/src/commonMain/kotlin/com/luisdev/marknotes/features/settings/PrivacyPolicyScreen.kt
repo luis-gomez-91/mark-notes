@@ -30,7 +30,7 @@ fun PrivacyPolicyScreen(
             ) {
                 item {
                     val content by produceState(initialValue = "") {
-                        value = loadMarkdownResource("privacy_policy", language)
+                        value = loadMarkdownResource("app_settings/privacy_policy", language)
                     }
                     Markdown(content = """$content""".trimIndent())
                 }

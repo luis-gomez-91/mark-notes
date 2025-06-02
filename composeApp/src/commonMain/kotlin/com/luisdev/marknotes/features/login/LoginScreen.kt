@@ -16,7 +16,6 @@ fun LoginScreen(
     loginViewModel: LoginViewModel,
     navHostController: NavHostController
 ) {
-    Napier.i( "POOOOSI", tag = "prueba")
     MyDashboardBack(
         title = "",
         onBackClick = { navHostController.popBackStack() },

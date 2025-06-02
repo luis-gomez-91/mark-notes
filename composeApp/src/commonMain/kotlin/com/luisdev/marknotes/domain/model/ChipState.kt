@@ -1,4 +1,4 @@
-package org.itb.sga.data.domain
+package com.luisdev.marknotes.domain.model
 
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector

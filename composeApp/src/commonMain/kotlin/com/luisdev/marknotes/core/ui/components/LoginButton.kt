@@ -30,7 +30,7 @@ fun LoginButton(
     textStyle: TextStyle = MaterialTheme.typography.bodyMedium,
     modifier: Modifier = Modifier,
     shape: RoundedCornerShape = RoundedCornerShape(24.dp),
-    urlImage: String?
+    urlImage: String? = null
 ) {
     FilledTonalButton(
         onClick = onClickAction,

@@ -43,7 +43,7 @@ fun TermsConditionsScreen(
 
                 item {
                     val content by produceState(initialValue = "") {
-                        value = loadMarkdownResource("terms", language)
+                        value = loadMarkdownResource("app_settings/terms", language)
                     }
                     Markdown(content = """$content""".trimIndent())
                 }

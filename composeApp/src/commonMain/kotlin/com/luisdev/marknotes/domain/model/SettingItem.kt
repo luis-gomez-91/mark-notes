@@ -1,4 +1,4 @@
-package com.luisdev.marknotes.data.domain
+package com.luisdev.marknotes.domain.model
 
 import androidx.compose.ui.graphics.vector.ImageVector
 

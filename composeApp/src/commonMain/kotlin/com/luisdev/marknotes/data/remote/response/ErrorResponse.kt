@@ -1,0 +1,9 @@
+package com.luisdev.marknotes.data.remote.response
+
+import kotlinx.serialization.Serializable
+
+@Serializable
+data class ErrorResponse(
+    val title: String,
+    val message: String
+)

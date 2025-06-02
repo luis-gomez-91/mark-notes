@@ -29,7 +29,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
-import com.luisdev.marknotes.data.domain.BottomBarItem
+import com.luisdev.marknotes.domain.model.BottomBarItem
 import compose.icons.CssGgIcons
 import compose.icons.cssggicons.AddR
 import compose.icons.cssggicons.ChevronLeft
