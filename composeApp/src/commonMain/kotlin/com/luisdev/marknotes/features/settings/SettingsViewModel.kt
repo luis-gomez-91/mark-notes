@@ -44,14 +44,6 @@ class SettingsViewModel: ViewModel() {
         _themeBottomSheet.value = newValue
     }
 
-//    Login
-    private val _loginOpcionsBottomSheet = MutableStateFlow(false)
-    val loginOpcionsBottomSheet: StateFlow<Boolean> = _loginOpcionsBottomSheet
-
-    fun setLoginOpcionsBottomSheet(newValue: Boolean) {
-        _loginOpcionsBottomSheet.value = newValue
-    }
-
 //    Account
     private val _accountBottomSheet = MutableStateFlow(false)
     val accountBottomSheet: StateFlow<Boolean> = _accountBottomSheet

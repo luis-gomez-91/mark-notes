@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import com.luisdev.marknotes.features.notes.NotesViewModel
-import com.luisdev.marknotes.features.notes.screens.drawer.MainDrawer
+import com.luisdev.marknotes.features.notes.screens.drawer.DrawerContent
 
 @Composable
 fun MainScaffold(
@@ -24,7 +24,7 @@ fun MainScaffold(
     ModalNavigationDrawer(
         drawerState = drawerState,
         drawerContent = {
-            MainDrawer(
+            DrawerContent(
                 notesViewModel = notesViewModel
             )
         },

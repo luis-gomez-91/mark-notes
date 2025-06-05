@@ -35,12 +35,13 @@
     <string name="slogan">"Una buena nota vale más que mil memorias."</string>
     <string name="find_note">Buscar nota</string>
     <string name="sign_in_with">Iniciar sesión con</string>
-    <string name="member_since">Miembro desde</string>
     <string name="premium_messagge">Obtén más con Premium</string>
     <string name="premium_plans">Planes Premium</string>
     <string name="or">o</string>
     <string name="no_account_qs">¿No tienes cuenta?</string>
     <string name="sign_up">Regístrate</string>
-
+    <string name="authenticated_with">Autenticado con</string>
+    <string name="member_since">Miembro desde</string>
+    <string name="last_sign_in">Último inicio de sesión</string>
 
 </resources>

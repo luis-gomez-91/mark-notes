@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -47,6 +49,7 @@ import com.luisdev.marknotes.core.navigation.TermsCondition
 import com.luisdev.marknotes.core.ui.components.LoginButton
 import com.luisdev.marknotes.core.ui.components.MyCard
 import com.luisdev.marknotes.core.ui.components.MyDashboardBack
+import com.luisdev.marknotes.core.ui.components.MyFilledTonalButton
 import com.luisdev.marknotes.core.ui.components.MyHorizontalDivider
 import com.luisdev.marknotes.core.utils.Language
 import com.luisdev.marknotes.core.utils.Localization
@@ -73,6 +76,7 @@ import compose.icons.simpleicons.Apple
 import compose.icons.simpleicons.Facebook
 import compose.icons.simpleicons.Github
 import compose.icons.simpleicons.Google
+import io.github.aakira.napier.Napier
 import io.github.jan.supabase.auth.providers.Apple
 import io.github.jan.supabase.auth.providers.Facebook
 import io.github.jan.supabase.auth.providers.Github
@@ -86,8 +90,10 @@ import marknotes.composeapp.generated.resources.Res
 import marknotes.composeapp.generated.resources.account
 import marknotes.composeapp.generated.resources.app
 import marknotes.composeapp.generated.resources.app_version
+import marknotes.composeapp.generated.resources.authenticated_with
 import marknotes.composeapp.generated.resources.forward
 import marknotes.composeapp.generated.resources.language
+import marknotes.composeapp.generated.resources.last_sign_in
 import marknotes.composeapp.generated.resources.member_since
 import marknotes.composeapp.generated.resources.not_active
 import marknotes.composeapp.generated.resources.preferences
@@ -131,7 +137,6 @@ fun Screen(
 ) {
     val languageBottomSheet by settingsViewModel.languageBottomSheet.collectAsState(false)
     val themeBottomSheet by settingsViewModel.themeBottomSheet.collectAsState(false)
-    val loginOpcionsBottomSheet by settingsViewModel.loginOpcionsBottomSheet.collectAsState(false)
     val accountBottomSheet by settingsViewModel.accountBottomSheet.collectAsState(false)
     val session by loginViewModel.session.collectAsState(null)
 
@@ -227,9 +232,6 @@ fun Screen(
     if (themeBottomSheet) {
         ThemeSelect(settingsViewModel)
     }
-    if (loginOpcionsBottomSheet) {
-        LoginOptions(settingsViewModel, loginViewModel)
-    }
 
     if (accountBottomSheet) {
         session?.let { AccountOptions(settingsViewModel, loginViewModel, it) }
@@ -244,14 +246,28 @@ fun AccountOptions(
     loginViewModel: LoginViewModel,
     session: UserSession
 ) {
-    val email = session.user?.email ?: "Correo no disponible"
-    val userId = session.user?.id ?: "ID desconocido"
-//    val createdAt = session.user?.createdAt
+    val user = session.user
+    val email = user?.email ?: "Correo no disponible"
+    val userId = user?.id ?: "ID desconocido"
+    val authProvider = user?.appMetadata?.get("provider")?.jsonPrimitive?.content?: ""
+    val fullName = (user?.userMetadata?.get("full_name")?.jsonPrimitive?.content)
+        ?: (user?.email?.split("@")?.firstOrNull() ?: "Usuario")
+
     val createdAt = session.user?.createdAt?.let { createdAtString ->
         val instant = Instant.parse(createdAtString.toString()) // Parsea el String ISO8601
         val localDate = instant.toLocalDateTime(TimeZone.currentSystemDefault()).date
         localDate.toString()  // Convierte LocalDate a "YYYY-MM-DD"
     } ?: "Fecha no disponible"
+
+    val lastSignInAt = user?.lastSignInAt?.let { lastSignInIso ->
+        try {
+            val instant = Instant.parse(lastSignInIso.toString())
+            val localDateTime = instant.toLocalDateTime(TimeZone.currentSystemDefault())
+            "${localDateTime.date} ${localDateTime.hour.toString().padStart(2, '0')}:${localDateTime.minute.toString().padStart(2, '0')}"
+        } catch (e: Exception) {
+            "Último inicio de sesión no disponible"
+        }
+    } ?: "Último inicio de sesión no disponible"
 
     val avatarUrl = (session.user?.userMetadata)
         ?.get("avatar_url")
@@ -265,114 +281,79 @@ fun AccountOptions(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+            horizontalAlignment = Alignment.CenterHorizontally,
+            // Use Arrangement.spacedBy for consistent spacing if preferred
+            verticalArrangement = Arrangement.spacedBy(8.dp) // Default spacing
         ) {
+            // Avatar
             AsyncImage(
                 model = avatarUrl,
-                contentDescription = null,
+                contentDescription = "User Avatar", // Provide a meaningful description
                 modifier = Modifier
                     .size(100.dp)
                     .clip(CircleShape),
-                contentScale = ContentScale.Crop
+                contentScale = ContentScale.Crop,
+                // Add error/placeholder if image fails to load
+                // placeholder = painterResource(id = R.drawable.ic_default_avatar),
+                // error = painterResource(id = R.drawable.ic_error_avatar)
             )
 
-            Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(8.dp)) // More space after avatar
 
-            // Correo
+            // Name
             Text(
-                text = email,
-                style = MaterialTheme.typography.titleMedium,
+                text = fullName,
+                style = MaterialTheme.typography.headlineSmall, // Larger for name
                 color = MaterialTheme.colorScheme.onSurface
             )
 
-            // ID del usuario
+            // Email
+            Text(
+                text = email,
+                style = MaterialTheme.typography.bodyLarge, // Slightly larger than bodyMedium
+                color = MaterialTheme.colorScheme.onSurfaceVariant
+            )
+
+            // ID del usuario (maybe useful for support, less prominent)
             Text(
                 text = "ID: $userId",
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.outline
             )
 
-            // Fecha de creación
+            // Authentication Provider
             Text(
-                text = "${stringResource(Res.string.member_since)}: $createdAt",
+                text = "${stringResource(Res.string.authenticated_with)} ${authProvider.capitalize()}", // Capitalize for display
                 style = MaterialTheme.typography.bodySmall,
                 color = MaterialTheme.colorScheme.outline
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            // Fecha de creación
+            Text(
+                text = "${stringResource(Res.string.member_since)} $createdAt",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.outline
+            )
 
-            Button(
-                onClick = {
+            // Last Sign-in Date
+            Text(
+                text = "${stringResource(Res.string.last_sign_in)}: $lastSignInAt",
+                style = MaterialTheme.typography.bodySmall,
+                color = MaterialTheme.colorScheme.outline
+            )
+
+            Spacer(modifier = Modifier.height(8.dp))
+
+            MyFilledTonalButton(
+                onClickAction = {
                     loginViewModel.signOut()
                     settingsViewModel.setAccountBottomSheet(false)
                 },
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = MaterialTheme.colorScheme.errorContainer,
-                    contentColor = MaterialTheme.colorScheme.onErrorContainer
-                ),
-            ) {
-                Icon(
-                    imageVector = CssGgIcons.LogOut,
-                    contentDescription = stringResource(Res.string.sign_out),
-                    modifier = Modifier.size(18.dp)
-                )
-                Spacer(modifier = Modifier.width(8.dp))
-                Text(text = stringResource(Res.string.sign_out))
-            }
-
-            Spacer(modifier = Modifier.height(8.dp))
-        }
-    }
-}
-
-@OptIn(ExperimentalMaterial3Api::class)
-@Composable
-fun LoginOptions(
-    settingsViewModel: SettingsViewModel,
-    loginViewModel: LoginViewModel
-) {
-    val options = listOf(
-        LoginOption("Apple", LoginProvider.IDToken(Apple), SimpleIcons.Apple, null, Color.Black, Color.White, Color(0xFFCDC6B4)),
-        LoginOption("Google", LoginProvider.IDToken(Google), null, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png", Color.White, Color.Black, Color(0xFF4B4739)),
-        LoginOption("Facebook", LoginProvider.IDToken(Facebook) , SimpleIcons.Facebook, "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2023_Facebook_icon.svg/2048px-2023_Facebook_icon.svg.png", Color(0xFF1877F2), Color.White, Color(0xFFCDC6B4)),
-        LoginOption("GitHub", LoginProvider.OAuth(Github), SimpleIcons.Github, null,  Color(0xFF3C3C3C), Color.White, Color(0xFFCDC6B4))
-    )
-    val isLoading by loginViewModel.isLoading.collectAsState()
-
-    ModalBottomSheet(
-        onDismissRequest = { settingsViewModel.setLoginOpcionsBottomSheet(false) },
-        containerColor = MaterialTheme.colorScheme.background
-    ) {
-        LazyColumn(
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            if (isLoading) {
-                item {
-                    LinearProgressIndicator(modifier = Modifier.fillMaxWidth())
-                }
-            }
-            items(options) { option ->
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    LoginButton(
-                        text = "${stringResource(Res.string.sign_in_with)} ${option.name}",
-                        enabled = !isLoading,
-                        onClickAction = {
-                            loginViewModel.signInWithOAuth(option.provider)
-                        },
-                        buttonColor = option.colorContainer,
-                        textColor = option.colorText,
-                        icon = option.icon,
-                        urlImage = option.urlImage,
-                        borderColor = option.borderColor
-                    )
-                }
-                Spacer(Modifier.height(8.dp))
-            }
+                text = stringResource(Res.string.sign_out),
+                buttonColor = MaterialTheme.colorScheme.errorContainer,
+                textColor = MaterialTheme.colorScheme.error,
+                icon = CssGgIcons.LogOut
+            )
         }
     }
 }

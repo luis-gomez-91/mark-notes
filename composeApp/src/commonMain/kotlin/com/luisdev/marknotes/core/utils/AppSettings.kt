@@ -25,6 +25,10 @@ object AppSettings {
         settings.putString(KEY_SESSION_TOKEN, token)
     }
 
+    fun clearSessionToken() {
+        settings.remove(KEY_SESSION_TOKEN)
+    }
+
     fun getSessionToken(): String? {
         return settings.getStringOrNull(KEY_SESSION_TOKEN)
     }
