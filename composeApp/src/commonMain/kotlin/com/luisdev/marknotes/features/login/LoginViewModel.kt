@@ -9,6 +9,7 @@ import com.luisdev.marknotes.domain.model.LoginProvider
 import io.github.aakira.napier.Napier
 import io.github.jan.supabase.SupabaseClient
 import io.github.jan.supabase.auth.auth
+import io.github.jan.supabase.auth.providers.Google
 import io.github.jan.supabase.auth.user.UserSession
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -21,7 +22,7 @@ class LoginViewModel(
 ): ViewModel() {
     val client = createHttpClient()
 
-    private val _session = MutableStateFlow<UserSession?>(supabase.auth.currentSessionOrNull())
+    private val _session = MutableStateFlow<UserSession?>(null)
     val session: StateFlow<UserSession?> = _session
 
     private val _userId = MutableStateFlow<String?>(null)
@@ -36,51 +37,54 @@ class LoginViewModel(
         viewModelScope.launch {
             _isLoading.value = true
             try {
-                when (provider) {
-                    is LoginProvider.IDToken -> {
-                        supabase.auth.signInWith(
-                            provider = provider.provider,
-                            redirectUrl = "marknotesapp://callback"
-                        ) {
-                            scopes.addAll(listOf("email", "profile"))
-                            queryParams["prompt"] = "select_account"
-                        }
-                    }
-                    is LoginProvider.OAuth -> {
-                        supabase.auth.signInWith(
-                            provider = provider.provider,
-                            redirectUrl = "marknotesapp://callback"
-                        ) {
-                            scopes.addAll(listOf("email", "profile"))
-                            queryParams["prompt"] = "select_account"
-                        }
-                    }
+                supabase.auth.signInWith(
+                    provider = Google,
+                    redirectUrl = "marknotesapp://callback"
+                ) {
+                    scopes.addAll(listOf("email", "profile"))
+                    queryParams["prompt"] = "select_account"
                 }
-                val loadedSession = supabase.auth.sessionManager.loadSession()
-                val accessToken = loadedSession?.accessToken
-                _session.value = loadedSession
-                loadedSession?.let {
-                    AppSettings.setSessionToken(it.accessToken)
-                    it.user?.let { user ->
-                        AppSettings.setUserId(user.id)
-                        _userId.value = user.id
-                    }
-                }
-
-                Napier.i("$accessToken", tag = "prueba")
-                Napier.i("${loadedSession?.user?.id}", tag = "prueba")
-
-//                val response = client.get("${URL_SERVER}notas") {
-//                    headers {
-//                        append("Authorization", "Bearer $accessToken")
+//                when (provider) {
+//                    is LoginProvider.IDToken -> {
+//                        supabase.auth.signInWith(
+//                            provider = provider.provider,
+//                            redirectUrl = "marknotesapp://callback"
+//                        ) {
+//                            scopes.addAll(listOf("email", "profile"))
+//                            queryParams["prompt"] = "select_account"
+//                        }
+//                    }
+//                    is LoginProvider.OAuth -> {
+//                        supabase.auth.signInWith(
+//                            provider = provider.provider,
+//                            redirectUrl = "marknotesapp://callback"
+//                        ) {
+//                            scopes.addAll(listOf("email", "profile"))
+//                            queryParams["prompt"] = "select_account"
+//                        }
 //                    }
 //                }
 
+//                val loadedSession = supabase.auth.sessionManager.loadSession()
+//                val accessToken = loadedSession?.accessToken
+//                _session.value = loadedSession
+//                loadedSession?.let {
+//                    AppSettings.setSessionToken(it.accessToken)
+//                    it.user?.let { user ->
+//                        AppSettings.setUserId(user.id)
+//                        _userId.value = user.id
+//                    }
+//                }
+//
+//                Napier.i("$accessToken", tag = "prueba")
+//                Napier.i("${loadedSession?.user?.id}", tag = "prueba")
+                Napier.i("TERMINO", tag = "caca")
+
             } catch (e: Exception) {
                 _session.value = null
-                Napier.i("ERROR POSI: $e")
+                Napier.i("ERROR POSI: $e", tag = "prueba")
             } finally {
-                _isLoading.value = false
+//                _isLoading.value = false
             }
         }
     }
@@ -99,35 +103,12 @@ class LoginViewModel(
         }
     }
 
-    fun restoreSessionIfPossible() {
-        viewModelScope.launch {
-            Napier.i("FUNCION RESTORE SESSION", tag = "deeplink")
-//            Napier.i("Intentando restaurar sesión...", tag = "SESSION")
-//            val session = supabase.auth.sessionManager.loadSession()
-//            Napier.i("Sesión restaurada: $session", tag = "SESSION")
-            try {
-                val session = supabase.auth.currentSessionOrNull()
-                if (session != null) {
-                    _session.value = session
-                    AppSettings.setSessionToken(session.accessToken)
-                    session.user?.id?.let {
-                        AppSettings.setUserId(it)
-                        _userId.value = it
-                    }
-                    Napier.i("Sesión restaurada correctamente", tag = "deeplink")
-                } else {
-                    _session.value = null
-                    Napier.i("No hay sesión activa", tag = "deeplink")
-                }
-            } catch (e: Exception) {
-                AppSettings.clearSession()
-                AppSettings.clearUserId()
-                _session.value = null
-                Napier.e("Error restaurando sesión: $e", tag = "deeplink")
-            }
+    fun onSessionRestored(session: UserSession) {
+        _session.value = session
+        AppSettings.setSessionToken(session.accessToken)
+        session.user?.let { user ->
+            AppSettings.setUserId(user.id)
+            _userId.value = user.id
         }
     }
-
-
-
 }

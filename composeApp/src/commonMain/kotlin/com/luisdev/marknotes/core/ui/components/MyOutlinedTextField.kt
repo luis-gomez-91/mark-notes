@@ -56,9 +56,9 @@ fun MyOutlinedTextField(
         keyboardOptions = keyboardOptions,
         textStyle = textStyle,
         colors = TextFieldDefaults.colors(
-            focusedIndicatorColor = Color.Transparent,
-            unfocusedIndicatorColor = Color.Transparent,
-            disabledIndicatorColor = Color.Transparent,
+            focusedIndicatorColor = MaterialTheme.colorScheme.onSurface,
+            unfocusedIndicatorColor = MaterialTheme.colorScheme.onSurfaceVariant,
+            disabledIndicatorColor = MaterialTheme.colorScheme.outlineVariant,
             unfocusedContainerColor = Color.Transparent,
             focusedContainerColor = Color.Transparent,
             disabledContainerColor = Color.Transparent

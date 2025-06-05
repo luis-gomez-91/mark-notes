@@ -11,7 +11,8 @@ data class LoginOption (
     val icon: ImageVector?,
     val urlImage: String?,
     val colorContainer: Color,
-    val colorText: Color
+    val colorText: Color,
+    val borderColor: Color
 )
 
 sealed class LoginProvider {

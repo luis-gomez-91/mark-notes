@@ -63,6 +63,8 @@ kotlin {
             implementation(libs.material.icons.extended)
             implementation(libs.composeIcons.cssGg)
             implementation(libs.composeIcons.simpleIcons)
+            implementation(libs.composeIcons.tablerIcons)
+
 
 //            implementation(libs.compose.markdown)
 
@@ -132,6 +134,7 @@ repositories {
 
 dependencies {
     implementation(libs.androidx.ui.text.google.fonts)
+    implementation(libs.googleid)
     debugImplementation(compose.uiTooling)
 }
 

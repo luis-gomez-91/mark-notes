@@ -16,6 +16,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.graphics.Color
 import com.luisdev.marknotes.core.ui.components.LoginButton
 import com.luisdev.marknotes.features.notes.NotesViewModel
 import marknotes.composeapp.generated.resources.Res
@@ -60,7 +61,8 @@ fun MainDrawer(
                         text = "notas",
                         onClickAction = {
                             notesViewModel.fetchNotes()
-                        }
+                        },
+                        borderColor = Color.Red
                     )
                 }
             }

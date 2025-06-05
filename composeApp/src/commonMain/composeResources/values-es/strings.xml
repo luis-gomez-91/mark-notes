@@ -38,6 +38,9 @@
     <string name="member_since">Miembro desde</string>
     <string name="premium_messagge">Obtén más con Premium</string>
     <string name="premium_plans">Planes Premium</string>
+    <string name="or">o</string>
+    <string name="no_account_qs">¿No tienes cuenta?</string>
+    <string name="sign_up">Regístrate</string>
 
 
 </resources>

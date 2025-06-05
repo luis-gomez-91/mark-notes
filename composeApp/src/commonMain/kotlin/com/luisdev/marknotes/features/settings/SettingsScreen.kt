@@ -40,6 +40,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import coil3.compose.AsyncImage
 import com.luisdev.marknotes.core.navigation.AppVersion
+import com.luisdev.marknotes.core.navigation.Login
 import com.luisdev.marknotes.core.navigation.PrivacyPolicy
 import com.luisdev.marknotes.core.navigation.SuscriptionOptions
 import com.luisdev.marknotes.core.navigation.TermsCondition
@@ -72,7 +73,6 @@ import compose.icons.simpleicons.Apple
 import compose.icons.simpleicons.Facebook
 import compose.icons.simpleicons.Github
 import compose.icons.simpleicons.Google
-import io.github.aakira.napier.Napier
 import io.github.jan.supabase.auth.providers.Apple
 import io.github.jan.supabase.auth.providers.Facebook
 import io.github.jan.supabase.auth.providers.Github
@@ -135,10 +135,6 @@ fun Screen(
     val accountBottomSheet by settingsViewModel.accountBottomSheet.collectAsState(false)
     val session by loginViewModel.session.collectAsState(null)
 
-    LaunchedEffect(session) {
-        Napier.i("SESION: $session", tag = "prueba")
-    }
-
     val preferences = SettingGroup(
         title = stringResource(Res.string.preferences),
         settingItems = listOf(
@@ -184,7 +180,10 @@ fun Screen(
                 SettingItem(
                     title = stringResource(Res.string.sign_in),
                     icon = CssGgIcons.LogIn,
-                    onClick = { settingsViewModel.setLoginOpcionsBottomSheet(true) }
+                    onClick = {
+                        navHostController.navigate(Login)
+//                        settingsViewModel.setLoginOpcionsBottomSheet(true)
+                    }
                 )
             }
             else -> {
@@ -333,15 +332,16 @@ fun LoginOptions(
     loginViewModel: LoginViewModel
 ) {
     val options = listOf(
-        LoginOption("Apple", LoginProvider.IDToken(Apple), SimpleIcons.Apple, null, Color.Black, Color.White),
-        LoginOption("Google", LoginProvider.IDToken(Google), SimpleIcons.Google, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png", Color.White, Color.Black),
-        LoginOption("Facebook", LoginProvider.IDToken(Facebook) , SimpleIcons.Facebook, "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2023_Facebook_icon.svg/2048px-2023_Facebook_icon.svg.png", Color(0xFF1877F2), Color.White),
-        LoginOption("GitHub", LoginProvider.OAuth(Github), SimpleIcons.Github, null,  Color.Black, Color.White)
+        LoginOption("Apple", LoginProvider.IDToken(Apple), SimpleIcons.Apple, null, Color.Black, Color.White, Color(0xFFCDC6B4)),
+        LoginOption("Google", LoginProvider.IDToken(Google), null, "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c1/Google_%22G%22_logo.svg/768px-Google_%22G%22_logo.svg.png", Color.White, Color.Black, Color(0xFF4B4739)),
+        LoginOption("Facebook", LoginProvider.IDToken(Facebook) , SimpleIcons.Facebook, "https://upload.wikimedia.org/wikipedia/commons/thumb/b/b9/2023_Facebook_icon.svg/2048px-2023_Facebook_icon.svg.png", Color(0xFF1877F2), Color.White, Color(0xFFCDC6B4)),
+        LoginOption("GitHub", LoginProvider.OAuth(Github), SimpleIcons.Github, null,  Color(0xFF3C3C3C), Color.White, Color(0xFFCDC6B4))
     )
     val isLoading by loginViewModel.isLoading.collectAsState()
 
     ModalBottomSheet(
-        onDismissRequest = { settingsViewModel.setLoginOpcionsBottomSheet(false) }
+        onDismissRequest = { settingsViewModel.setLoginOpcionsBottomSheet(false) },
+        containerColor = MaterialTheme.colorScheme.background
     ) {
         LazyColumn(
             modifier = Modifier.fillMaxWidth()
@@ -364,13 +364,11 @@ fun LoginOptions(
                         onClickAction = {
                             loginViewModel.signInWithOAuth(option.provider)
                         },
-                        buttonColor = MaterialTheme.colorScheme.secondaryContainer,
-                        textColor = MaterialTheme.colorScheme.secondary,
-//                        buttonColor = option.colorContainer,
-//                        textColor = option.colorText,
-//                        modifier = Modifier.fillMaxWidth(),
+                        buttonColor = option.colorContainer,
+                        textColor = option.colorText,
                         icon = option.icon,
-                        urlImage = option.urlImage
+                        urlImage = option.urlImage,
+                        borderColor = option.borderColor
                     )
                 }
                 Spacer(Modifier.height(8.dp))
